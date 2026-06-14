@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Calculator</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+    padding:20px;
+}
+
+.calculator{
+    width:550px;
+    background:#1f2937;
+    padding:20px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
+
+h2{
+    color:white;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+#display{
+    width:100%;
+    height:75px;
+    border:none;
+    outline:none;
+    border-radius:10px;
+    padding:15px;
+    text-align:right;
+    font-size:2rem;
+    background:#111827;
+    color:white;
+    margin-bottom:10px;
+}
+
+#history{
+    min-height:60px;
+    max-height:120px;
+    overflow-y:auto;
+    color:#cbd5e1;
+    text-align:right;
+    margin-bottom:15px;
+    padding:5px;
+    font-size:14px;
+}
+
+.buttons{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+button{
+    padding:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:1rem;
+    transition:.3s;
+    box-shadow:0 4px 8px rgba(0,0,0,.2);
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+button:active{
+    transform:scale(.95);
+}
+
+.number{
+    background:#374151;
+    color:white;
+}
+
+.operator{
+    background:#2563eb;
+    color:white;
+}
+
+.equal{
+    background:#16a34a;
+    color:white;
+}
+
+.clear{
+    background:#dc2626;
+    color:white;
+}
+
+@media(max-width:600px){
+
+    .calculator{
+        width:100%;
+    }
+
+    button{
+        padding:14px;
+        font-size:.9rem;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="calculator">
+
+    <h2>Scientific Calculator</h2>
+
+    <input type="text" id="display" readonly>
+
+    <div id="history"></div>
+
+    <div class="buttons">
+
+        <!-- Row 1 -->
+        <button class="clear" onclick="clearDisplay()">C</button>
+        <button class="operator" onclick="backspace()">⌫</button>
+        <button class="operator" onclick="appendValue('(')">(</button>
+        <button class="operator" onclick="appendValue(')')">)</button>
+
+        <!-- Row 2 -->
+        <button class="operator" onclick="appendFunction('Math.sin(')">sin</button>
+        <button class="operator" onclick="appendFunction('Math.cos(')">cos</button>
+        <button class="operator" onclick="appendFunction('Math.tan(')">tan</button>
+        <button class="operator" onclick="appendFunction('Math.sqrt(')">√</button>
+
+        <!-- Row 3 -->
+        <button class="operator" onclick="appendFunction('Math.log10(')">log</button>
+        <button class="operator" onclick="appendFunction('Math.log(')">ln</button>
+        <button class="operator" onclick="appendValue('Math.PI')">π</button>
+        <button class="operator" onclick="appendValue('Math.E')">e</button>
+
+        <!-- Row 4 -->
+        <button class="operator" onclick="square()">x²</button>
+        <button class="operator" onclick="appendValue('**')">xʸ</button>
+        <button class="operator" onclick="appendValue('%')">%</button>
+        <button class="operator" onclick="appendValue('/')">÷</button>
+
+        <!-- Row 5 -->
+        <button class="number" onclick="appendValue('7')">7</button>
+        <button class="number" onclick="appendValue('8')">8</button>
+        <button class="number" onclick="appendValue('9')">9</button>
+        <button class="operator" onclick="appendValue('*')">×</button>
+
+        <!-- Row 6 -->
+        <button class="number" onclick="appendValue('4')">4</button>
+        <button class="number" onclick="appendValue('5')">5</button>
+        <button class="number" onclick="appendValue('6')">6</button>
+        <button class="operator" onclick="appendValue('-')">−</button>
+
+        <!-- Row 7 -->
+        <button class="number" onclick="appendValue('1')">1</button>
+        <button class="number" onclick="appendValue('2')">2</button>
+        <button class="number" onclick="appendValue('3')">3</button>
+        <button class="operator" onclick="appendValue('+')">+</button>
+
+        <!-- Row 8 -->
+        <button class="number" onclick="appendValue('0')">0</button>
+        <button class="number" onclick="appendValue('.')">.</button>
+        <button class="equal" onclick="calculate()" style="grid-column:span 2">
+            =
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const display = document.getElementById("display");
+const history = document.getElementById("history");
+
+function appendValue(value){
+    display.value += value;
+}
+
+function appendFunction(func){
+    display.value += func;
+}
+
+function clearDisplay(){
+    display.value = "";
+}
+
+function backspace(){
+    display.value = display.value.slice(0,-1);
+}
+
+function square(){
+
+    if(display.value !== ""){
+        display.value = "(" + display.value + ")**2";
+    }
+
+}
+
+function calculate(){
+
+    try{
+
+        let expression =
+        display.value.replace(/%/g,"/100");
+
+        let result = eval(expression);
+
+        history.innerHTML =
+        display.value + " = " + result + "<br>" +
+        history.innerHTML;
+
+        display.value = result;
+
+    }
+
+    catch{
+
+        display.value = "Error";
+
+    }
+
+}
+
+/* Keyboard Support */
+
+document.addEventListener("keydown",(event)=>{
+
+    const key = event.key;
+
+    if(
+        (key >= "0" && key <= "9") ||
+        key === "+" ||
+        key === "-" ||
+        key === "*" ||
+        key === "/" ||
+        key === "." ||
+        key === "(" ||
+        key === ")"
+    ){
+        appendValue(key);
+    }
+
+    else if(key === "Enter"){
+        calculate();
+    }
+
+    else if(key === "Backspace"){
+        backspace();
+    }
+
+    else if(key === "Escape"){
+        clearDisplay();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
